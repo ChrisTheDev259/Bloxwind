@@ -1,6 +1,9 @@
+--!strict
 -- Hover trigger: plays forward on MouseEnter, back on MouseLeave.
 
-return {
+local Types = require(script.Parent.Parent.Types)
+
+local hover: Types.TriggerModule = {
 	name = "hover",
 	connect = function(gui)
 		local enter = gui.instance.MouseEnter:Connect(function()
@@ -14,3 +17,5 @@ return {
 		return { enter, leave }
 	end,
 }
+
+return hover

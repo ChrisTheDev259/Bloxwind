@@ -1,6 +1,9 @@
+--!strict
 -- Clicked trigger: plays the animation, waits for its duration, then plays back.
 
-return {
+local Types = require(script.Parent.Parent.Types)
+
+local click: Types.TriggerModule = {
 	name = "click",
 	connect = function(gui)
 		return gui.instance.Activated:Connect(function()
@@ -10,3 +13,5 @@ return {
 		end)
 	end,
 }
+
+return click

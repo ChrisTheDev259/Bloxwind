@@ -14,6 +14,8 @@ export type PropertyModule = PropertiesController.PropertyModule
 local Bloxwind = {}
 Bloxwind.__index = Bloxwind
 
+local Registered_Guis: { [GuiObject]: BloxwindInstance } = {}
+
 export type BloxwindInstance = typeof(setmetatable(
 	{} :: {
 		instance: GuiObject,
@@ -60,6 +62,8 @@ local function OnGuiDeleted(self: BloxwindInstance)
 	table.clear(self._triggerConnections)
 	
 	if self.instance then self.instance:Destroy() end
+
+	Registered_Guis[self.instance] = nil
 	
 	self = nil
 end
@@ -71,24 +75,21 @@ function Bloxwind.Apply_Config(self: BloxwindInstance, prop: string, value: any,
 	prop = prop:lower()
 
 	-- Look up a property module. If one exists, it owns parsing and applying the value.
-	local module = properties:FindFirstChild(prop)
-	if module and module:IsA("ModuleScript") then
-		local property = require(module) :: any
-		if property and property.Apply then
-			local result = property.Apply(self, IsDefault == true, value)
+	local property = PropertiesController.Get(prop)
+	if property then
+		local result = property.Apply(self, IsDefault == true, value)
 
-			-- The trigger property returns connections we need to track for cleanup.
-			-- Disconnect any previously-applied trigger connections first so that
-			-- reconfiguring triggers at runtime does not leak listeners.
-			if prop == "trigger" then
-				for _, c in ipairs(self._triggerConnections) do
-					if c.Connected then c:Disconnect() end
-				end
-				table.clear(self._triggerConnections)
-				collectConnections(result, self._triggerConnections)
+		-- The trigger property returns connections we need to track for cleanup.
+		-- Disconnect any previously-applied trigger connections first so that
+		-- reconfiguring triggers at runtime does not leak listeners.
+		if prop == "trigger" then
+			for _, c in ipairs(self._triggerConnections) do
+				if c.Connected then c:Disconnect() end
 			end
-			return
+			table.clear(self._triggerConnections)
+			collectConnections(result, self._triggerConnections)
 		end
+		return
 	end
 
 	-- No property module: store the value directly on the animation config.
@@ -179,7 +180,12 @@ end
 
 -- Constructor
 
-function Bloxwind.Set_Gui(gui: GuiObject): BloxwindInstance
+function Bloxwind.Get_Gui(gui: GuiObject): BloxwindInstance
+	-- Check if a Bloxwind instance is already registered for this GUI object.
+	if Registered_Guis[gui] then
+		return Registered_Guis[gui]
+	end
+
 	-- Seed with empty config shapes so the strict type is satisfied before
 	-- Make_Config replaces them with the real snapshot.
 	local self = setmetatable({
@@ -197,6 +203,8 @@ function Bloxwind.Set_Gui(gui: GuiObject): BloxwindInstance
 	}, Bloxwind) :: BloxwindInstance
 
 	gui:SetAttribute("bw_active", false)
+
+	Registered_Guis[gui] = self
 
 	config.Make_Config(self) -- replaces self.Config and self.core_config with real data
 

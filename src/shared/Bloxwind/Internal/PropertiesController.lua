@@ -3,9 +3,9 @@
 -- once at module load and exposes a hashmap lookup. Avoids repeated FindFirstChild
 -- calls in the hot path (Bloxwind.Apply_Config runs on every animated property).
 
-export type PropertyModule = {
-	Apply: (gui: any, IsDefault: boolean, value: any) -> any,
-}
+local Types = require(script.Parent.Types)
+
+export type PropertyModule = Types.PropertyModule
 
 local Properties = {}
 

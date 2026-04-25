@@ -10,7 +10,7 @@ local Bloxwind = require(ReplictaedStorage.Bloxwind.Bloxwind)
 local Tag_folder = ReplictaedStorage.Bloxwind.Tag
 
 function New_gui(newGui)
-	local gui = Bloxwind.Set_Gui(newGui)
+	local gui = Bloxwind.Get_Gui(newGui)
 	
 	for i,tag:Instance in pairs(Tag_folder:GetChildren()) do
 		local Tagged = CollectionService:GetTagged(tag.Name)
