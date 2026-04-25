@@ -2,11 +2,12 @@ local Internal = script.Parent.Internal
 
 local config = require(Internal.Config)
 local Animator = require(Internal.Animator)
-local properties = Internal.properties
+local PropertiesController = require(Internal.PropertiesController)
 
--- Re-export Config's types so callers only need to require Bloxwind.
+-- Re-export types so callers only need to require Bloxwind.
 export type BloxwindConfig = config.BloxwindConfig
 export type CoreConfig = config.CoreConfig
+export type PropertyModule = PropertiesController.PropertyModule
 
 -- Class
 
@@ -77,7 +78,13 @@ function Bloxwind.Apply_Config(self: BloxwindInstance, prop: string, value: any,
 			local result = property.Apply(self, IsDefault == true, value)
 
 			-- The trigger property returns connections we need to track for cleanup.
+			-- Disconnect any previously-applied trigger connections first so that
+			-- reconfiguring triggers at runtime does not leak listeners.
 			if prop == "trigger" then
+				for _, c in ipairs(self._triggerConnections) do
+					if c.Connected then c:Disconnect() end
+				end
+				table.clear(self._triggerConnections)
 				collectConnections(result, self._triggerConnections)
 			end
 			return

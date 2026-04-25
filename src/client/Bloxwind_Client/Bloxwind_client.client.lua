@@ -5,9 +5,9 @@ local pg = plr.PlayerGui
 local ReplictaedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
 
-local Bloxwind = require(ReplictaedStorage.Shared.Bloxwind.Bloxwind)
+local Bloxwind = require(ReplictaedStorage.Bloxwind.Bloxwind)
 
-local Tag_folder = ReplictaedStorage.Shared.Bloxwind.Tag
+local Tag_folder = ReplictaedStorage.Bloxwind.Tag
 
 function New_gui(newGui)
 	local gui = Bloxwind.Set_Gui(newGui)

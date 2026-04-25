@@ -54,12 +54,16 @@ function Config.Make_Config(self)
 	
 	
 	
-	local function snapshotProps(gui: Instance, list: {string}?): {[string]: any} -- this function gets properties of different types if guis
+	-- Snapshots whichever properties the gui actually supports.
+	-- pcall guards against properties missing on this gui type (e.g. TextColor3 on a Frame).
+	local function snapshotProps(gui: Instance, list: {string}?): {[string]: any}
 		list = list or POSSIBLE_PROPS
 		local t = {}
 		for _, prop in ipairs(list) do
 			local ok, v = pcall(function() return gui[prop] end)
-			if ok then t[prop] = v or conf.Default_Properties[prop] end
+			if ok and v ~= nil then
+				t[prop] = v
+			end
 		end
 		return t
 	end
