@@ -6,7 +6,7 @@ Attribute-driven animation for Roblox GUIs. Set `bw_*` attributes on a `GuiObjec
 
 1. Place a `GuiObject` under `PlayerGui`.
 2. In Properties, add:
-   - `bw_trigger` (string) = `hover,hoverout`
+   - `bw_trigger` (string) = `hover, click`
    - `bw_size` (string) = `*1.1`
    - `bw_duration` (number) = `0.2`
 3. Run the game. Hover grows the GUI by 10%. Mouse leave reverts it.
