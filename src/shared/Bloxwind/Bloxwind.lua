@@ -50,24 +50,16 @@ end
 local function OnGuiDeleted(self: BloxwindInstance)
 	if self._destroyed then return end
 	self._destroyed = true
-
 	for _, c in ipairs(self._connections) do
 		if c.Connected then c:Disconnect() end
 	end
 	table.clear(self._connections)
-
 	for _, c in ipairs(self._triggerConnections) do
 		if c.Connected then c:Disconnect() end
 	end
 	table.clear(self._triggerConnections)
-	
-	local Instance = self.instance
-	
-	Registered_Guis[self.instance] = nil
-	
-	if Instance then Instance:Destroy() end
 
-	self = nil
+	Registered_Guis[self.instance] = nil
 end
 
 -- Main
