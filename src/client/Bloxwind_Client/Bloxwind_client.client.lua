@@ -13,10 +13,8 @@ function New_gui(newGui)
 	local gui = Bloxwind.Get_Gui(newGui)
 	
 	for i,tag:Instance in pairs(Tag_folder:GetChildren()) do
-		local Tagged = CollectionService:GetTagged(tag.Name)
 
-		if table.find(Tagged,gui.instance) then
-			
+		if CollectionService:HasTag(newGui, tag.Name) then
 			gui:Set_Tag_Config(tag)
 		end
 	end
